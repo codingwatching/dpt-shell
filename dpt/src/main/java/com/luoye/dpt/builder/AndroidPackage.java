@@ -616,11 +616,33 @@ public abstract class AndroidPackage {
         CountDownLatch countDownLatch = new CountDownLatch(dexFiles.size());
         AtomicInteger totalClassesCount = new AtomicInteger(0);
         AtomicInteger keepClassesCount = new AtomicInteger(0);
+
+        ShellConfig shellConfig = ShellConfig.getInstance();
         for(File dexFile : dexFiles) {
             ThreadPool.getInstance().execute(() -> {
                 final int dexNo = DexUtils.getDexNumber(dexFile.getName());
                 if(dexNo < 0) {
                     return;
+                }
+
+                File injectedDexFile = new File(dexFile.getAbsolutePath() + "_inject.dex");
+
+                try {
+                    DexUtils.injectInvokeMethod(dexFile.getAbsolutePath(),
+                            injectedDexFile.getAbsolutePath(),
+                            shellConfig.getJniClassNameSig(),
+                            "clinit",
+                            new ArrayList<>(),
+                            "V"
+                    );
+
+                    dexFile.delete();
+
+                    injectedDexFile.renameTo(dexFile);
+                }
+                catch (Exception e) {
+                    LogUtils.warn("WARNING: inject %s fail", dexFile.getName());
+                    injectedDexFile.delete();
                 }
 
                 if(isKeepClasses()) {
@@ -641,7 +663,6 @@ public abstract class AndroidPackage {
                         keepDex.delete();
                         splitDex.delete();
                     }
-
                 }
 
                 String extractedDexName = dexFile.getName().endsWith(".dex") ? dexFile.getName().replaceAll("\\.dex$", "_extracted.dat") : "_extracted.dat";

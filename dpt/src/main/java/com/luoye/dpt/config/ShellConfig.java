@@ -119,14 +119,22 @@ public class ShellConfig {
         this.signatureConfig = signatureConfig;
     }
 
+    public String getJniSlashClassName() {
+        return String.format(Locale.US, "%s/%s",
+                getSlashShellPackageName(),
+                Const.KEY_JNI_BASE_CLASS_NAME
+        );
+    }
+
+    public String getJniClassNameSig() {
+        return String.format(Locale.US, "L%s;", getJniSlashClassName());
+    }
+
     public String toJson() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("app_name", getApplicationName());
         jsonObject.put("acf_name", getAppComponentFactoryName());
-        String jniClassName = String.format(Locale.US, "%s/%s",
-                getSlashShellPackageName(),
-                Const.KEY_JNI_BASE_CLASS_NAME
-        );
+        String jniClassName = getJniSlashClassName();
         jsonObject.put("jni_cls_name", jniClassName);
         return jsonObject.toString();
     }

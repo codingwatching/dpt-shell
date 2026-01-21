@@ -57,4 +57,6 @@ jobject replaceApplication(JNIEnv *env, jclass __unused, jstring originApplicati
 void replaceApplicationOnActivityThread(JNIEnv *env,jclass __unused, jobject realApplication);
 void replaceApplicationOnLoadedApk(JNIEnv *env, jclass __unused, jobject realApplication);
 
+void clinit(__unused JNIEnv *env, __unused jclass);
+
 #endif //DPT_DPT_H

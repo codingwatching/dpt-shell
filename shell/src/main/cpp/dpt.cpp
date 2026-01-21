@@ -37,7 +37,8 @@ static JNINativeMethod gMethods[] = {
         {"rapn",   "()Ljava/lang/String;",        (void *) readApplicationName},
         {"cbde",   "(Ljava/lang/ClassLoader;)V",  (void *) combineDexElements},
         {"rde",   "(Ljava/lang/ClassLoader;Ljava/lang/String;)V",        (void *) removeDexElements},
-        {"ra", "(Ljava/lang/String;)Ljava/lang/Object;",                               (void *) replaceApplication}
+        {"ra", "(Ljava/lang/String;)Ljava/lang/Object;",                               (void *) replaceApplication},
+        {"clinit", "()V",                               (void *) clinit}
 };
 
 DPT_ENCRYPT jobjectArray makePathElements(JNIEnv* env,const char *pathChs) {
@@ -298,6 +299,10 @@ DPT_ENCRYPT jobject getApplicationInstance(JNIEnv *env, jstring applicationClass
 
     }
     return g_realApplicationInstance;
+}
+
+DPT_ENCRYPT void clinit(__unused JNIEnv *env, jclass) {
+    // nothing
 }
 
 DPT_ENCRYPT void callRealApplicationOnCreate(JNIEnv *env, jclass, jstring realApplicationClassName) {
